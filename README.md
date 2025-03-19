@@ -8,4 +8,4 @@ A little about me:
 - I am taking STATS 220 because it looks fun
 - I am interested in learning about how it applies the R language
 
-A meme that captures how I currently feel about my university studies is ![dying](https://tenor.com/6fpL.gif)
+A meme that captures how I currently feel about my university studies is ![family-guy-peter-dying](https://github.com/user-attachments/assets/d3cb252d-67ec-499c-bcf0-0ff650d3041d)
