@@ -1,0 +1,160 @@
+---
+title: My dynamic report
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+body {
+  background-color: #121212;
+  color: #E0E0E0;
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  line-height: 1.6;
+  padding: 2em;
+}
+
+h2, h3 {
+  color: #FF9800;
+  border-bottom: 1px solid #333;
+  padding-bottom: 5px;
+  margin-top: 2em;
+}
+
+code {
+  background-color: #1E1E1E;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: "Fira Code", monospace;
+  color: #00BCD4;
+}
+
+pre {
+  background-color: #1E1E1E;
+  color: #B0BEC5;
+  padding: 1em;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5em;
+}
+
+th, td {
+  border: 1px solid #333;
+  padding: 0.75em;
+  text-align: left;
+}
+
+th {
+  background-color: #212121;
+  color: #FF9800;
+}
+
+a {
+  color: #64B5F6;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 1em;
+}
+
+
+```
+
+## How I respond to my Sotify Daily Feeds
+
+
+This report explores how I respond to different music genres from my **Spotify daily feeds**.
+
+Let's see how genre affects enjoyment and listening patterns.
+
+
+```{r}
+library(tidyverse)
+
+
+#import data
+logged_data <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vScns1xPkfQxpvfcPueO-Q3zj7TrB9VeXmCvCBz4nuDOTfiqbrub-6mVdHEl3W4rkGooIPgODSCqwqn/pub?output=csv")
+
+
+print(logged_data)
+
+
+# Rename columns after importing
+latest_data <- logged_data %>%
+  rename(
+    timestamp = `Timestamp`,
+    genre = `What genre is the song?`,
+    finished = `Did you finish listening to the entire song?`,
+    enjoyment = `How would you rate your enjoyment of this song? (1 to 10)`,
+    action_after = `What did you do after listening?`,
+    listen_period = `When did you listen to the song?`
+  )
+
+
+# Summary values
+enjoyment_mean <- mean(latest_data$enjoyment, na.rm = TRUE)
+enjoyment_max <- max(latest_data$enjoyment, na.rm = TRUE)
+enjoyment_min <- min(latest_data$enjoyment, na.rm = TRUE)
+
+
+# Bar chart 1: Number of songs listened to by genre
+ggplot(latest_data, aes(x = genre)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Number of Songs Listened to by Genre",
+       x = "Genre",
+       y = "Count") +
+  theme_minimal()
+
+
+# Bar chart 2: Average enjoyment by genre
+latest_data %>%
+  group_by(genre) %>%
+  summarise(avg_enjoyment = mean(enjoyment, na.rm = TRUE)) %>%
+  ggplot(aes(x = genre, y = avg_enjoyment)) +
+  geom_col(fill = "darkorange") +
+  labs(title = "Average Enjoyment by Genre",
+       x = "Genre",
+       y = "Average Enjoyment Rating (1–10)") +
+  theme_minimal()
+
+
+# --- Summary of Exploration ---
+# Based on the data exploration:
+# - The most frequently listened-to genres is Classical.
+# - Classical and Jazz had the highest average enjoyment ratings.
+
+```
+
+The **average enjoyment rating** across all songs was **`r round(enjoyment_mean, 1)`**, and the **highest rating** given was **`r enjoyment_max`**.
+
+### Chart 1: Number of Songs Listened to by Genre
+This chart shows how often each genre appeared in my Spotify daily feed and was listened to.
+Classical songs showed up and were listened to the most, while Hip-hop and Jazz appeared less often.
+Pop, R&B, and Rock were more balanced in number.
+This gives a quick overview of the genre distribution in the feed, based on what I engaged with.
+
+### Chart 2: Average Enjoyment by Genre
+This chart shows how much I enjoyed each genre based on the songs recommended to me.
+Jazz and Classical had the highest enjoyment scores, both averaging over 8.
+Hip-hop had the lowest score, around 5.
+This suggests that while I didn’t choose the songs myself, I had stronger positive reactions to certain genres like Classical and Jazz.
+
+
+
+
+
